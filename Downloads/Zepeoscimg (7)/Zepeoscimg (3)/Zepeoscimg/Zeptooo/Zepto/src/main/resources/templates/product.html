@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Management</title>
+  <style>
+    /* Styling same as your original for design consistency */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f0ff;
+      color: #4a00e0;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #8e44ad;
+      animation: fadeInDown 1s ease-in-out;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    table, th, td {
+      border: 1px solid #8e44ad;
+    }
+
+    th {
+      background-color: #8e44ad;
+      color: #fff;
+      padding: 12px;
+      text-align: left;
+      font-size: 16px;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    td {
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+      animation: fadeInUp 1s ease-in-out;
+    }
+
+    input[type="text"], input[type="number"], input[type="file"] {
+      padding: 10px;
+      border: 1px solid #8e44ad;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #8e44ad;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background-color: #4a00e0;
+      transform: scale(1.05);
+    }
+
+    #searchQuery {
+      padding: 10px;
+      border: 1px solid #8e44ad;
+      border-radius: 5px;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    
+    
+    body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.back-button {
+  background-color: #007BFF;
+  color: white;
+  padding: 12px 24px;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 16px;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+    
+    
+    
+    
+    
+    
+  </style>
+</head>
+<body>
+
+  <h1>Product Management</h1>
+
+  <form id="productForm">
+    <input type="hidden" id="productId">
+    <input type="text" id="productName" placeholder="Product Name" required>
+    <input type="text" id="productDescription" placeholder="Product Description" required>
+    <input type="number" id="productPrice" placeholder="Price" required>
+    <input type="number" id="productStock" placeholder="Stock" required>
+    <input type="file" id="productImage" accept="image/*">
+    <button type="submit" id="submitBtn">Add Product</button>
+  </form>
+
+  <h2>Product List</h2>
+  <table id="productTable">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Stock</th>
+        <th>Image</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <h2>Search Products</h2>
+  <input type="text" id="searchQuery" placeholder="Search by Name">
+  <button onclick="searchProductByName()">Search</button>
+
+
+
+<div class="container">
+    <a class="back-button" th:href="@{/index}">← Back to Home</a>
+</div>
+
+
+
+  <script>
+    const apiUrl = 'http://localhost:8080/product';
+
+    function fetchProducts() {
+      fetch(apiUrl)
+        .then(res => res.json())
+        .then(products => {
+          const tbody = document.querySelector('#productTable tbody');
+          tbody.innerHTML = '';
+          products.forEach(product => {
+            const row = `<tr>
+              <td>${product.id}</td>
+              <td>${product.name}</td>
+              <td>${product.description}</td>
+              <td>${product.price}</td>
+              <td>${product.stockQuantity}</td>
+              <td><img src="http://localhost:8080${product.imagePath}" width="50" alt="Product Image"></td>
+              <td>
+                <button onclick="editProduct(${product.id})">Edit</button>
+                <button onclick="deleteProduct(${product.id})">Delete</button>
+              </td>
+            </tr>`;
+            tbody.innerHTML += row;
+          });
+        });
+    }
+
+    document.getElementById('productForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const id = document.getElementById('productId').value;
+
+      const product = {
+        name: document.getElementById('productName').value,
+        description: document.getElementById('productDescription').value,
+        price: document.getElementById('productPrice').value,
+        stockQuantity: document.getElementById('productStock').value
+      };
+
+      const formData = new FormData();
+      formData.append('product', new Blob([JSON.stringify(product)], { type: 'application/json' }));
+      const image = document.getElementById('productImage').files[0];
+      if (image) {
+        formData.append('image', image);
+      }
+
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `${apiUrl}/update/${id}` : `${apiUrl}/add`;
+
+      fetch(url, {
+        method,
+        body: formData
+      })
+        .then(res => res.json())
+        .then(() => {
+          fetchProducts();
+          resetForm();
+        });
+    });
+
+    function deleteProduct(id) {
+      fetch(`${apiUrl}/delete/${id}`, {
+        method: 'DELETE'
+      }).then(() => fetchProducts());
+    }
+
+    function editProduct(id) {
+      fetch(`${apiUrl}/${id}`)
+        .then(res => res.json())
+        .then(product => {
+          document.getElementById('productId').value = product.id;
+          document.getElementById('productName').value = product.name;
+          document.getElementById('productDescription').value = product.description;
+          document.getElementById('productPrice').value = product.price;
+          document.getElementById('productStock').value = product.stockQuantity;
+          document.getElementById('submitBtn').textContent = 'Update Product';
+        });
+    }
+
+    function resetForm() {
+      document.getElementById('productForm').reset();
+      document.getElementById('productId').value = '';
+      document.getElementById('submitBtn').textContent = 'Add Product';
+    }
+
+    function searchProductByName() {
+      const query = document.getElementById('searchQuery').value;
+      fetch(`${apiUrl}/search/name?name=${query}`)
+        .then(res => res.json())
+        .then(products => {
+          const tbody = document.querySelector('#productTable tbody');
+          tbody.innerHTML = '';
+          products.forEach(product => {
+            const row = `<tr>
+              <td>${product.id}</td>
+              <td>${product.name}</td>
+              <td>${product.description}</td>
+              <td>${product.price}</td>
+              <td>${product.stockQuantity}</td>
+              <td><img src="http://localhost:8080${product.imagePath}" width="50" alt="Product Image"></td>
+              <td>
+                <button onclick="editProduct(${product.id})">Edit</button>
+                <button onclick="deleteProduct(${product.id})">Delete</button>
+              </td>
+            </tr>`;
+            tbody.innerHTML += row;
+          });
+        });
+    }
+
+    fetchProducts();
+  </script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Management</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1, h2 {
+            color: #6a1b9a;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 2.5em;
+        }
+
+        form {
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #6a1b9a;
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        form:hover {
+            transform: scale(1.02);
+        }
+
+        form label {
+            color: white;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        form input {
+            padding: 10px;
+            width: 80%;
+            border: 2px solid #4a148c;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        form input:focus {
+            outline: none;
+            border-color: #ab47bc;
+        }
+
+        form button {
+            background-color: #8e24aa;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        form button:hover {
+            background-color: #7b1fa2;
+            transform: translateY(-3px);
+        }
+
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        table:hover {
+            transform: scale(1.01);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            font-size: 1.1em;
+            border-bottom: 2px solid #eee;
+        }
+
+        th {
+            background-color: #ab47bc;
+            color: white;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #f3e5f5;
+        }
+
+        td button {
+            background-color: #ab47bc;
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        td button:hover {
+            background-color: #8e24aa;
+            transform: translateY(-3px);
+        }
+
+        td button:active {
+            transform: translateY(1px);
+        }
+
+        /* Animation */
+        tr {
+            transition: all 0.3s ease;
+        }
+
+        tr:hover {
+            background-color: #f0d9ff;
+            transform: translateY(-3px);
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Category Management</h1>
+    
+    <!-- Form to add/update category -->
+    <form id="categoryForm">
+        <input type="hidden" id="categoryId">
+        <label for="categoryName">Category Name:</label>
+        <input type="text" id="categoryName" placeholder="Enter category name" required>
+        <button type="submit">Add/Update Category</button>
+    </form>
+
+    <!-- Category list table -->
+    <h2>All Categories</h2>
+    <table id="categoryTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const categoryForm = document.getElementById('categoryForm');
+            const categoryTableBody = document.querySelector('#categoryTable tbody');
+            const categoryIdField = document.getElementById('categoryId');
+            const categoryNameField = document.getElementById('categoryName');
+
+            // Function to fetch and display all categories
+            function fetchCategories() {
+                fetch('/categories')
+                    .then(response => response.json())
+                    .then(data => {
+                        categoryTableBody.innerHTML = ''; // Clear the table
+                        data.forEach(category => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${category.id}</td>
+                                <td>${category.name}</td>
+                                <td>
+                                    <button onclick="editCategory(${category.id})">Edit</button>
+                                    <button onclick="deleteCategory(${category.id})">Delete</button>
+                                </td>
+                            `;
+                            categoryTableBody.appendChild(row);
+                        });
+                    })
+                    .catch(error => console.error('Error fetching categories:', error));
+            }
+
+            // Function to add or update a category
+            categoryForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const categoryId = categoryIdField.value;
+                const categoryName = categoryNameField.value;
+
+                const url = categoryId ? `/categories/${categoryId}` : '/categories';
+                const method = categoryId ? 'PUT' : 'POST';
+
+                fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ name: categoryName })
+                })
+                    .then(response => response.json())
+                    .then(() => {
+                        categoryForm.reset(); // Clear form
+                        fetchCategories(); // Refresh the list
+                    })
+                    .catch(error => console.error('Error adding/updating category:', error));
+            });
+
+            // Function to delete a category
+            window.deleteCategory = function (id) {
+                fetch(`/categories/${id}`, {
+                    method: 'DELETE'
+                })
+                    .then(() => fetchCategories()) // Refresh the list
+                    .catch(error => console.error('Error deleting category:', error));
+            };
+
+            // Function to edit a category (populate the form with existing data)
+            window.editCategory = function (id) {
+                fetch(`/categories/${id}`)
+                    .then(response => response.json())
+                    .then(category => {
+                        categoryIdField.value = category.id;
+                        categoryNameField.value = category.name;
+                    })
+                    .catch(error => console.error('Error fetching category:', error));
+            };
+
+            // Initial fetch to display categories when the page loads
+            fetchCategories();
+        });
+    </script>
+</body>
+</html>

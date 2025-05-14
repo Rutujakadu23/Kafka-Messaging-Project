@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h2 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #8e44ad;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        body {
+  font-family: Arial, sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.back-button {
+  background-color: #007BFF;
+  color: white;
+  padding: 12px 24px;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 16px;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
+}
+        
+        
+        
+        
+    </style>
+</head>
+<body>
+
+    <h2>All Orders</h2>
+
+    <table id="ordersTable">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Buyer Name</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Status</th>
+                <th>Delivery Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Orders will be dynamically inserted here -->
+        </tbody>
+    </table>
+    
+    
+<div class="container">
+    <a class="back-button" th:href="@{/index}">← Back to Home</a>
+</div>
+    
+    
+
+    <script>
+        // This function fetches all orders on page load
+        window.onload = function () {
+            fetch('http://localhost:8080/orders/all') // Make sure this is your actual endpoint
+                .then(response => response.json())
+                .then(orders => {
+                    const tableBody = document.querySelector('#ordersTable tbody');
+                    tableBody.innerHTML = ''; // clear old rows
+
+                    orders.forEach(order => {
+                        const row = `
+                            <tr>
+                                <td>${order.id}</td>
+                                <td>${order.buyerName || 'N/A'}</td>
+                                <td>${order.productName || 'N/A'}</td>
+                                <td>${order.quantity}</td>
+                                <td>${order.totalPrice}</td>
+                                <td>${order.status}</td>
+                                <td>${order.deliveryDate || 'Pending'}</td>
+                            </tr>
+                        `;
+                        tableBody.insertAdjacentHTML('beforeend', row);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching orders:', error);
+                    alert("Failed to load orders.");
+                });
+        };
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+    <style>
+    
+    html, body{
+    height:100%
+    }
+    
+    
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+          background-color: #f3e5f5; /* A soft lavender purple */
+
+            height: 100%;
+            overflow-x: hidden;
+        }
+        
+       
+        
+        
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background-color: #6a1b9a; /* Dark purple */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            
+        }
+
+        .header h2 {
+            font-size: 24px;
+              margin-left: 50px;
+            transition: color 0.3s ease;
+        }
+
+        
+
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-icons i {
+            font-size: 20px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .header-icons i:hover {
+            color: #ce93d8; /* Light purple hover */
+        }
+
+      .profile {
+        position: relative;
+        cursor: pointer;
+        margin-right: 50px;
+    }
+
+    .profile-dropdown {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: #fff;
+    color: #333;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: opacity 5s ease, transform 5s ease;
+    opacity: 0;
+    transform: scaleY(0);
+    z-index: 100;
+}
+
+    .profile-dropdown a {
+        display: block;
+        padding: 12px 24px;
+        text-decoration: none;
+        color: #333;
+        background-color: #7e57c2; /* Darker purple */
+        border-bottom: 1px solid #ddd;
+        transition: background-color 0.3s ease;
+    }
+
+    .profile-dropdown a:hover {
+        background-color: #9575cd; /* Medium light purple */
+    }
+
+    .profile:hover .profile-dropdown {
+        display: block;
+        opacity: 1;
+        transform: scaleY(1);
+    }
+
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+            transform: scaleY(0);
+        }
+    }
+
+       /* Sidebar */
+.sidebar {
+    font-family: 'Poppins', sans-serif; /* Changed to 'Poppins' for a modern look */
+    position: fixed;
+    top: 65px;
+    left: 0;
+    width: 260px;
+    background-color: #4a148c; /* Deep purple */
+    color: white;
+    padding: 20px;
+    height: calc(100vh - 65px);
+    overflow-y: auto;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.4s ease-in-out;
+}
+
+/* Sidebar Heading */
+.sidebar h2 {
+    color: #f3e5f5; /* Lighter purple for heading */
+    font-size: 24px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Sidebar Links */
+.sidebar a {
+    display: flex;
+    align-items: center;
+    color: white;
+    padding: 12px 20px;
+    margin-bottom: 15px;
+    text-decoration: none;
+    border-radius: 10px;
+    background: linear-gradient(to right, #6a1b9a, #8e24aa); /* Gradient effect */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Hover effect for Sidebar Links */
+.sidebar a:hover {
+    background-color: #ba68c8; /* Light purple on hover */
+    transform: translateX(10px); /* Slight movement */
+    color: #fff;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar Icons */
+.sidebar i {
+    font-size: 18px;
+    margin-right: 15px;
+    color: #f8bbd0; /* Light pink for icons */
+    transition: transform 0.4s ease;
+}
+
+/* Icon rotation on hover */
+.sidebar a:hover i {
+    transform: rotate(20deg); /* Rotate icon on hover */
+}
+
+/* Dropdown inside Sidebar */
+.dropdown {
+    display: none;
+    margin-left: 10px;
+    padding-left: 20px;
+    border-left: 2px solid #7b1fa2; /* Divider for dropdown items */
+    animation: slideIn 0.4s ease-in-out;
+}
+
+.dropdown a {
+    background-color: #6a1b9a; /* Darker background for dropdown links */
+    margin-bottom: 10px;
+    border-radius: 8px;
+}
+
+/* Dropdown button */
+.dropdown-btn {
+    cursor: pointer;
+}
+
+/* Hover to show dropdown */
+.dropdown-btn:hover .dropdown {
+    display: block;
+}
+
+/* Sidebar Animation */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Slide In Animation for Dropdown */
+@keyframes slideIn {
+    from {
+        max-height: 0;
+        opacity: 0;
+    }
+    to {
+        max-height: 200px;
+        opacity: 1;
+    }
+}
+
+/* Sidebar Header Icon */
+.sidebar h2 i {
+    margin-right: 10px;
+    font-size: 24px;
+    color: #ffcc80; /* Gold icon color */
+}
+
+.dashboard-boxes {
+    display: grid; /* Use grid layout for flexible design */
+    grid-template-columns: repeat(3, 1fr); /* 3 columns on large screens */
+    gap: 20px;
+    width: 90%;
+    max-width: 1200px;
+    justify-content: center; /* Center the content horizontally */
+    margin-left: auto; /* Center the container itself */
+    margin-right: auto; /* Center the container itself */
+}
+
+.box {
+    background: 	#AF69EE; /* Faint purple gradient */
+    color: white; /* Deep purple for text */
+    border-radius: 20px; /* Rounded corners */
+    padding: 20px;
+    text-align: center;
+    box-shadow: 8px 8px 15px rgba(0, 0, 0, 0.1), -8px -8px 15px rgba(255, 255, 255, 0.5); /* 3D effect with shadows */
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+
+
+/* Heading and number inside the box */
+.box h3 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.box span {
+    font-size: 42px;
+    font-weight: bold;
+    display: block;
+    margin: 10px 0;
+    color: #7b1fa2; /* Bright purple for numbers */
+}
+
+/* Background animated effect */
+
+
+.box h3, .box span {
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes pulse-bg {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+
+/* Responsive layout */
+@media (max-width: 768px) {
+    .dashboard-boxes {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-boxes {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+        /* Main Content */
+        .content {
+            margin-left: 260px;
+            margin-top: 65px;
+          
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            width: calc(100% - 260px);
+            
+            
+            
+        }
+
+        .content h1 {
+            font-size: 24px;
+            color: #4a148c; /* Deep purple */
+            margin-bottom: 20px;
+            text-align: center;
+             margin-top: 40px; 
+        }
+
+        .content .dashboard-charts {
+            display: flex;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+             gap: 5px;
+           
+             
+        }
+        
+        .chart-box h3 {
+    text-align: center;
+}
+        
+        
+        
+
+        .chart-box {
+            width: 40%;
+            padding: 10px;
+            background-color: white;
+              margin: 10px 5px 10px 60px;
+             /* Added more space on the right side */
+            border-radius: 8px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .chart-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Mobile Sidebar Toggle */
+        .sidebar-toggle {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                left: -250px;
+                position: absolute;
+            }
+
+            .sidebar-toggle {
+                display: block;
+                position: fixed;
+                top: 70px;
+                left: 10px;
+                cursor: pointer;
+                font-size: 24px;
+                color: #4a148c; /* Deep purple */
+            }
+
+            .content {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .content.sidebar-open {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+    </style></head>
+<body>
+
+ 
+
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content" id="dashboardContent">
+       
+
+
+     <!-- Header -->
+    <div class="header">
+        <h2>ZAPEO</h2>
+
+        <!-- Search Bar -->
+        
+
+        <div class="header-icons">
+         
+            <div class="profile">
+                <i class="fas fa-user"></i> Admin Profile
+                
+                <div class="profile-dropdown">
+                    <a href="#">View Profile</a>
+                    <a href="#">Settings</a>
+                 <a href="#" onclick="logout(event)">Logout</a> <!-- Pass event to logout -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+   <!-- Sidebar -->
+<div class="sidebar">
+    <h2> <i class="fa fa-user-circle-o" aria-hidden="true">    </i> Admin Dashboard</h2>
+    <div class="dropdown-btn">
+        <a href="#"><i class="fa fa-tachometer"></i> Dashboard</a>
+        <div class="dropdown">
+                    <a href="buyer-page"> <i class="fa fa-first-order" aria-hidden="true">       </i> Buyer </a>
+            <a href="supplier-page"> <i class="fa fa-user-o" aria-hidden="true">     </i> Supplier </a>
+        
+           <a href="product-page"> <i class="fa fa-product-hunt" aria-hidden="true">      </i> Product </a>
+            <a href="order-page"> <i class="fa fa-first-order" aria-hidden="true">       </i> Order </a>
+            
+        </div>
+    </div>
+    <a href="inventory-page"> <i class="fa fa-cart-arrow-down" aria-hidden="true">     </i> Inventory </a>
+    <a href="offersVouchersCoupon-page"> <i class="fa fa-gift" aria-hidden="true">  </i>Offer & Coupon </a>
+    <a href="paymentintegration-page"> <i class="fa fa-credit-card" aria-hidden="true">    </i> Payment Transaction </a>
+    <a href="analytics-page"> <i class="fa fa-signal" aria-hidden="true">    </i> Sales & Revenue Analytics</a>
+    <a href="feedback-page"> <i class="fa fa-thumbs-o-up" aria-hidden="true">     </i> Customer Feedback & Support</a>
+    <a href="notifications-page"> <i class="fa fa-bell-o" aria-hidden="true">    </i> Notifications & Alerts</a>
+    <a href="profile-page"> <i class="fa fa-user-circle" aria-hidden="true">    </i> Admin Profile </a>
+</div>
+
+
+ 
+
+
+
+
+
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1>Welcome to the Admin Dashboard</h1>
+        
+        <div class="dashboard-boxes">
+        <div class="box" id="productCount">
+            <h3>Total Products</h3>
+            <span>0</span>
+        </div>
+        <div class="box" id="categoryCount">
+            <h3>Total Categories</h3>
+            <span>0</span>
+        </div>
+        <div class="box" id="supplierCount">
+            <h3>Total Suppliers</h3>
+            <span>0</span>
+        </div>
+        <div class="box" id="buyerCount">
+            <h3>Total Buyers</h3>
+            <span>0</span>
+        </div>
+        <div class="box" id="orderCount">
+            <h3>Total Orders</h3>
+            <span>0</span>
+        </div>
+    </div>
+        
+        <br>
+        
+       <div class="dashboard-charts">
+        <div class="chart-box">
+            <h3>Sales Overview</h3>
+            <canvas id="salesChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <h3>Product Stock</h3>
+            <canvas id="stockChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <h3>Revenue Breakdown</h3>
+            <canvas id="revenueChart"></canvas>
+        </div>
+        <div class="chart-box">
+            <h3>Customer Orders</h3>
+            <canvas id="ordersChart"></canvas>
+        </div>
+    </div>
+   </div>
+     </div>
+   
+  
+  
+  
+  
+    <!-- Toggle Sidebar for mobile view -->
+    <div class="sidebar-toggle"><i class="fas fa-bars"></i></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script>
+    
+   
+
+
+
+    
+        // Sidebar toggle for mobile
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggle = document.querySelector('.sidebar-toggle');
+        const content = document.querySelector('.content');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            content.classList.toggle('sidebar-open');
+        });
+
+        function fetchDashboardData() {
+            return new Promise((resolve, reject) => {
+                Promise.all([
+                    fetch('http://localhost:8080/products').then(response => response.json()),   // Fetch products
+                    fetch('http://localhost:8080/categories').then(response => response.json()), // Fetch categories
+                    fetch('http://localhost:8080/suppliers').then(response => response.json()),  // Fetch suppliers
+                    fetch('http://localhost:8080/buyers').then(response => response.json()),     // Fetch buyers
+                    fetch('http://localhost:8080/orders').then(response => response.json())      // Fetch orders
+                ])
+                .then(([products, categories, suppliers, buyers, orders]) => {
+                    resolve({
+                        totalProducts: products.length,
+                        totalCategories: categories.length,
+                        totalSuppliers: suppliers.length,
+                        totalBuyers: buyers.length,
+                        totalOrders: orders.length
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching dashboard data:', error);
+                    reject(error);
+                });
+            });
+        }
+
+        
+        const apiUrl = 'http://localhost:8080/products';
+
+        
+        
+     // Function to update the total product count on the dashboard
+        function updateProductCount(count) {
+            const productCountBox = document.getElementById('productCount').querySelector('span');
+            productCountBox.textContent = count;
+        }
+
+        // Fetch and display all products
+        function fetchProducts() {
+            fetch(apiUrl) // Assuming 'apiUrl' points to the correct products endpoint
+                .then(response => response.json())
+                .then(data => {
+                    const productTableBody = document.getElementById('productTable').querySelector('tbody');
+                    productTableBody.innerHTML = ''; // Clear the table before appending new rows
+
+                    data.forEach(product => {
+                        const row = `<tr>
+                            <td>${product.id}</td>
+                            <td>${product.name}</td>
+                            <td>${product.description}</td>
+                            <td>${product.price}</td>
+                            <td>${product.stockQuantity}</td>
+                            <td><img src="http://localhost:8080${product.imagePath}" alt="Product Image" width="50"></td>
+                            <td>
+                              <button onclick="editProduct(${product.id})">Edit</button>
+                              <button onclick="deleteProduct(${product.id})">Delete</button>
+                            </td>
+                        </tr>`;
+                        productTableBody.innerHTML += row;
+                    });
+
+                    // Update the product count on the dashboard
+                    updateProductCount(data.length);
+                })
+                .catch(error => console.error('Error fetching products:', error));
+        }
+
+       
+
+// Function to fetch and count the categories
+function fetchCategoryCount() {
+    fetch('http://localhost:8080/categories')  // Assuming this is the API endpoint for fetching categories
+        .then(response => response.json())
+        .then(data => {
+            const categoryCountSpan = document.querySelector('#categoryCount span');
+            categoryCountSpan.textContent = data.length; // Set the total category count in the span
+        })
+        .catch(error => console.error('Error fetching category count:', error));
+}
+
+// Function to initialize the dashboard and fetch all counts
+function initializeDashboard() {
+    fetchDashboardData()
+        .then(({ totalProducts, totalCategories, totalSuppliers, totalBuyers, totalOrders }) => {
+            document.getElementById('productCount').querySelector('span').textContent = totalProducts;
+            document.getElementById('categoryCount').querySelector('span').textContent = totalCategories;
+            document.getElementById('supplierCount').querySelector('span').textContent = totalSuppliers;
+            document.getElementById('buyerCount').querySelector('span').textContent = totalBuyers;
+            document.getElementById('orderCount').querySelector('span').textContent = totalOrders;
+        })
+        .catch(error => console.error('Error initializing dashboard:', error));
+}
+
+// Fetch the products and initialize the dashboard when the page loads
+document.addEventListener('DOMContentLoaded', function () {
+    fetchProducts();  // Populate product table
+    initializeDashboard();  // Initialize the dashboard counts
+    fetchCategoryCount();  // Fetch category count
+})
+
+        
+ 
+        // Sample chart data and configuration
+        const ctxSales = document.getElementById('salesChart').getContext('2d');
+        const salesChart = new Chart(ctxSales, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+                datasets: [{
+                    label: 'Sales',
+                    data: [2000, 3000, 4000, 3500, 5000],
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        const ctxStock = document.getElementById('stockChart').getContext('2d');
+        const stockChart = new Chart(ctxStock, {
+            type: 'bar',
+            data: {
+                labels: ['Product A', 'Product B', 'Product C', 'Product D', 'Product E'],
+                datasets: [{
+                    label: 'Stock Quantity',
+                    data: [150, 200, 100, 300, 120],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+        const revenueChart = new Chart(ctxRevenue, {
+            type: 'doughnut',
+            data: {
+                labels: ['Electronics', 'Clothing', 'Groceries', 'Furniture', 'Books'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [5000, 3000, 4000, 1500, 2000],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        const ctxOrders = document.getElementById('ordersChart').getContext('2d');
+        const ordersChart = new Chart(ctxOrders, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                datasets: [{
+                    label: 'Orders',
+                    data: [120, 150, 180, 220, 170],
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            }
+        });
+        
+        
+        const profile = document.getElementById('profile');
+        const dropdown = document.getElementById('profileDropdown');
+        let hideTimeout;  // Variable to store timeout ID
+
+        // Show dropdown on mouseover
+        profile.addEventListener('mouseover', () => {
+            clearTimeout(hideTimeout);  // Clear any previous hide timeout
+            dropdown.style.display = 'block';
+            dropdown.style.opacity = '1';
+            dropdown.style.transform = 'scaleY(1)';
+            
+            // Set timeout to hide after 10 seconds
+            hideTimeout = setTimeout(() => {
+                dropdown.style.opacity = '0';
+                dropdown.style.transform = 'scaleY(0)';
+            }, 10000);  // 10 seconds
+        });
+
+        // Prevent immediate hiding on mouseleave, keep it visible for 10 seconds
+        profile.addEventListener('mouseleave', () => {
+            // Do not hide instantly, the setTimeout will handle hiding after 10 seconds
+        });
+
+
+
+        
+        
+        
+        function logout(event) {
+            event.preventDefault();  // Prevent default link behavior
+            fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Redirect to login page after successful logout
+                    window.location.href = '/';
+                } else {
+                    console.error('Logout failed.');
+                }
+            }).catch(error => {
+                console.error('Error during logout:', error);
+            });
+        }
+        
+        
+        
+        
+   
+            
+    </script>
+</body>
+</html>

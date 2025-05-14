@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Purple theme and modern design */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1, h2 {
+        
+            color: #6a1b9a;
+             text-align: Center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        table {
+            width: 80%; /* Reduced width of the table */
+            margin: 0 auto; /* Centering the table */
+            border-collapse: collapse;
+            margin-bottom: 30px; /* Adjusted margin-bottom for spacing */
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px; /* Reduced padding */
+            text-align: left;
+        }
+
+        table th {
+            background-color: #6a1b9a;
+            color: white;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table tr:hover {
+            background-color: #ddd;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Flex container for forms */
+        .form-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px; /* Space between forms */
+            margin-bottom: 30px;
+        }
+
+        /* Compact Form styling */
+        form {
+            flex: 1;
+            background-color: white;
+            padding: 15px; /* Reduced padding */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #6a1b9a;
+        }
+
+        form input, form button {
+            width: 100%;
+            padding: 8px; /* Reduced padding */
+            margin-bottom: 5px; /* Reduced margin */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px; /* Reduced font size */
+        }
+
+        form button {
+            background-color: #6a1b9a;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        form button:hover {
+            background-color: #4a0072;
+        }
+
+        /* Button animation */
+        button {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        button:before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300%;
+            height: 300%;
+            background-color: rgba(255, 255, 255, 0.2);
+            z-index: -1;
+            transition: all 0.75s ease;
+            transform: translate(-50%, -50%) scale(0);
+        }
+
+        button:hover:before {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Animation for table row appearance */
+        tr {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        tr:nth-child(even) {
+            animation-delay: 0.1s;
+        }
+
+        tr:nth-child(odd) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <script>
+        // Function to fetch all users
+        function fetchUsers() {
+            fetch('/api/accounts/list')
+                .then(response => response.json())
+                .then(users => {
+                    const userList = document.getElementById('user-list');
+                    userList.innerHTML = ''; // Clear the list before adding new entries
+
+                    const table = document.createElement('table');
+                    const tableHead = `
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                    `;
+                    table.innerHTML = tableHead;
+                    const tableBody = document.createElement('tbody');
+
+                    users.forEach(user => {
+                        const userRow = document.createElement('tr');
+                        userRow.innerHTML = `
+                            <td>${user.id}</td>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>
+                                <button onclick="deleteUser(${user.id})">Delete</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(userRow);
+                    });
+
+                    table.appendChild(tableBody);
+                    userList.appendChild(table);
+                })
+                .catch(error => console.error('Error fetching users:', error));
+        }
+
+        // Function to create a new user
+        function createUser() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const user = {
+                name: name,
+                email: email,
+                password: password
+            };
+
+            fetch('/api/accounts/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(user)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('User created successfully!');
+                fetchUsers(); // Reload the user list after creating a new user
+            })
+            .catch(error => console.error('Error creating user:', error));
+        }
+
+        // Function to delete a user
+        function deleteUser(userId) {
+            fetch(`/api/accounts/delete/${userId}`, {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (response.status === 204) {
+                    alert('User deleted successfully!');
+                    fetchUsers(); // Reload the user list after deletion
+                } else {
+                    alert('Error deleting user.');
+                }
+            })
+            .catch(error => console.error('Error deleting user:', error));
+        }
+
+        // Fetch all users on page load
+        window.onload = fetchUsers;
+    </script>
+</head>
+<body>
+   
+
+        <!-- Flex container for forms (Create User and Delete User) -->
+        <div class="form-container">
+            <!-- Create a New User Form -->
+            <form onsubmit="event.preventDefault(); createUser();">
+                <h2>Create a New User</h2>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                
+                <button type="submit">Create User</button>
+            </form>
+
+            <!-- Delete a User Form -->
+            <form onsubmit="event.preventDefault(); deleteUser(document.getElementById('user-id-delete').value);">
+                <h2>Delete a User</h2>
+                <label for="user-id-delete">User ID:</label>
+                <input type="number" id="user-id-delete" name="user-id-delete" required>
+                
+                
+                
+                
+                <button type="submit">Delete User</button>
+            </form>
+        </div>
+    
+    
+     <div class="container">
+        <h1>User Management</h1>
+
+        <h2>All Users</h2>
+        <div id="user-list"></div>
+    
+    </div>
+</body>
+</html>

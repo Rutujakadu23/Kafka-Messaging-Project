@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Integration</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f0ff;
+            color: #4A235A;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #6A1B9A;
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            animation: slideIn 1s ease-in-out;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            color: #4A235A;
+        }
+
+        th {
+            background-color: #7B1FA2;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background-color: #f0e4ff;
+            transform: scale(1.02);
+            transition: 0.3s ease-in-out;
+        }
+
+        /* Button styling */
+        button {
+            background-color: #8E44AD;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #6A1B9A;
+        }
+
+        /* Table responsive design */
+        @media screen and (max-width: 600px) {
+            table {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Payment Integration</h1>
+
+    <!-- Payment Integration Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Transaction ID</th>
+                <th>Payment Method</th>
+                <th>Status</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>#TX12345</td>
+                <td>Credit Card</td>
+                <td>Success</td>
+                <td>$150.00</td>
+                <td>2025-03-24</td>
+            </tr>
+            <tr>
+                <td>#TX12346</td>
+                <td>PayPal</td>
+                <td>Pending</td>
+                <td>$200.00</td>
+                <td>2025-03-23</td>
+            </tr>
+            <tr>
+                <td>#TX12347</td>
+                <td>Bank Transfer</td>
+                <td>Failed</td>
+                <td>$500.00</td>
+                <td>2025-03-22</td>
+            </tr>
+            <tr>
+                <td>#TX12348</td>
+                <td>Debit Card</td>
+                <td>Success</td>
+                <td>$120.00</td>
+                <td>2025-03-21</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Add New Payment Button -->
+    <button>Add New Payment Method</button>
+
+</body>
+</html>

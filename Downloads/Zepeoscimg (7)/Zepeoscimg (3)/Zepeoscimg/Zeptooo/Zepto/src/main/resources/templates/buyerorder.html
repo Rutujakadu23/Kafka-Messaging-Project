@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Supplier Orders</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .Released { background-color: orange; }
+        .New { background-color: brown; }
+        .Invoiced { background-color: purple; }
+        .Fulfilled { background-color: green; }
+        .Preorder { background-color: blue; }
+
+        .fulfill-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .fulfill-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Orders Received by Supplier</h1>
+
+    <table id="ordersTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Buyer Name</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+                <th>Order Date</th>
+                <th>Deliver On</th>
+                <th>Total</th>
+                <th>Actions</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td colspan="9">Loading orders...</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Replace with dynamic ID if needed
+        const supplierId = 1;
+
+        function loadOrders() {
+            fetch(`http://localhost:8080/supplier/${supplierId}/orders`)
+                .then(response => response.json())
+                .then(data => renderOrders(data))
+                .catch(error => {
+                    console.error("Error fetching orders:", error);
+                    showMessage("Failed to load orders.");
+                });
+        }
+
+        function renderOrders(data) {
+            const tableBody = document.querySelector("#ordersTable tbody");
+            tableBody.innerHTML = "";
+
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach((order, index) => {
+                    const buyer = order.buyer || {};
+                    const row = document.createElement("tr");
+
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${buyer.name || 'N/A'}</td>
+                        <td>${buyer.address || 'N/A'}</td>
+                        <td>${buyer.phoneNumber || 'N/A'}</td>
+                        <td>${order.orderDate || 'N/A'}</td>
+                        <td>${order.deliveryDate || 'N/A'}</td>
+                        <td>₹${order.totalAmount?.toFixed(2) || '0.00'}</td>
+                        <td>
+                            <button class="fulfill-btn"
+                                    ${order.status === 'Fulfilled' ? 'disabled' : ''}
+                                    onclick="fulfillOrder(${order.id}, this)">
+                                Fulfill
+                            </button>
+                            <button class="fulfill-btn"
+                                    onclick="downloadInvoice(${order.id})">
+                                Invoice
+                            </button>
+                        </td>
+                        <td><span class="status ${order.status}">${order.status}</span></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                showMessage("No orders found.");
+            }
+        }
+
+        function fulfillOrder(orderId, button) {
+            fetch(`http://localhost:8080/orders/${orderId}/status?status=Fulfilled`, {
+                method: 'PUT',
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Order marked as Fulfilled!");
+                    const statusCell = button.closest('tr').querySelector('.status');
+                    statusCell.className = 'status Fulfilled';
+                    statusCell.textContent = 'Fulfilled';
+                    button.disabled = true;
+                } else {
+                    alert("Failed to fulfill the order.");
+                }
+            })
+            .catch(error => {
+                console.error("Error fulfilling order:", error);
+                alert("An error occurred while updating the status.");
+            });
+        }
+
+        function downloadInvoice(orderId) {
+            fetch(`http://localhost:8080/orders/invoice/${orderId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("Invoice generation failed");
+                    return response.blob();
+                })
+                .then(blob => {
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = `Invoice_Order_${orderId}.pdf`;
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                })
+                .catch(error => {
+                    console.error("Error downloading invoice:", error);
+                    alert("Failed to generate/download invoice.");
+                });
+        }
+
+        function showMessage(message) {
+            const tableBody = document.querySelector("#ordersTable tbody");
+            tableBody.innerHTML = `<tr><td colspan="9">${message}</td></tr>`;
+        }
+
+        // Load orders on page load
+        document.addEventListener('DOMContentLoaded', loadOrders);
+    </script>
+
+</body>
+</html>

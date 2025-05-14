@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offers, Vouchers, and Coupons</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3e5f5;
+            color: #4A148C;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        h1, h2 {
+            text-align: center;
+            color: #4A148C;
+            animation: fadeInDown 1s ease-in-out;
+        }
+
+        table {
+          
+            border-collapse: collapse;
+            width: 60%; /* Decrease table width */
+            margin: 20px auto; /* Center the table */
+            background-color: #ffffff;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #d1c4e9;
+        }
+
+        th {
+            background-color: #7B1FA2;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: slideInFromLeft 0.8s ease-in-out;
+        }
+
+        td {
+            color: #4A148C;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        td:hover {
+            background-color: #e1bee7;
+        }
+
+        button {
+            background-color: #AB47BC;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #7B1FA2;
+        }
+
+        form {
+          width: 40%; /* Decrease table width */
+            margin: 20px auto; /* Center the table */
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #d1c4e9;
+            border-radius: 5px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #4A148C;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInFromLeft {
+            0% { opacity: 0; transform: translateX(-50px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Table Hover Effect */
+        tr:nth-child(even) {
+            background-color: #f3e5f5;
+        }
+
+        tr:hover {
+            background-color: #d1c4e9;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Media Queries for Responsive Design */
+        @media (max-width: 768px) {
+            table {
+                font-size: 14px;
+            }
+
+            button {
+                padding: 8px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Offers, Vouchers, and Coupons</h1>
+
+    <h2>Offers</h2>
+    <!-- Form to Create Offer -->
+    <form id="offerForm">
+        <label for="offerName">Offer Name</label>
+        <input type="text" id="offerName" required>
+        
+        <label for="offerDescription">Offer Description</label>
+        <textarea id="offerDescription" required></textarea>
+
+        <button type="button" onclick="createOffer()">Add Offer</button>
+    </form>
+    <table id="offersTable">
+        <thead>
+            <tr>
+                <th>Offer ID</th>
+                <th>Offer Name</th>
+                <th>Offer Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Vouchers</h2>
+    <!-- Form to Create Voucher -->
+    <form id="voucherForm">
+        <label for="voucherName">Voucher Name</label>
+        <input type="text" id="voucherName" required>
+        
+        <label for="voucherValue">Voucher Value</label>
+        <input type="text" id="voucherValue" required>
+
+        <button type="button" onclick="createVoucher()">Add Voucher</button>
+    </form>
+    <table id="vouchersTable">
+        <thead>
+            <tr>
+                <th>Voucher ID</th>
+                <th>Voucher Name</th>
+                <th>Voucher Value</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h2>Coupons</h2>
+    <!-- Form to Create Coupon -->
+    <form id="couponForm">
+        <label for="couponCode">Coupon Code</label>
+        <input type="text" id="couponCode" required>
+        
+        <label for="couponDiscount">Coupon Discount</label>
+        <input type="text" id="couponDiscount" required>
+
+        <button type="button" onclick="createCoupon()">Add Coupon</button>
+    </form>
+    <table id="couponsTable">
+        <thead>
+            <tr>
+                <th>Coupon ID</th>
+                <th>Coupon Code</th>
+                <th>Coupon Discount</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Function to create a new offer
+        function createOffer() {
+            const offer = {
+                name: document.getElementById("offerName").value,
+                description: document.getElementById("offerDescription").value
+            };
+
+            fetch('http://localhost:8080/offers/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(offer)
+            }).then(response => response.json())
+              .then(() => location.reload());
+        }
+
+        // Function to create a new voucher
+        function createVoucher() {
+            const voucher = {
+                name: document.getElementById("voucherName").value,
+                value: document.getElementById("voucherValue").value
+            };
+
+            fetch('http://localhost:8080/vouchers/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(voucher)
+            }).then(response => response.json())
+              .then(() => location.reload());
+        }
+
+        // Function to create a new coupon
+        function createCoupon() {
+            const coupon = {
+                code: document.getElementById("couponCode").value,
+                discount: document.getElementById("couponDiscount").value
+            };
+
+            fetch('http://localhost:8080/coupons/save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(coupon)
+            }).then(response => response.json())
+              .then(() => location.reload());
+        }
+
+        // Fetch Offers, Vouchers, and Coupons on page load
+        window.onload = function() {
+            fetchOffers();
+            fetchVouchers();
+            fetchCoupons();
+        }
+
+        // Function to fetch offers
+        function fetchOffers() {
+            fetch('http://localhost:8080/offers')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector("#offersTable tbody");
+                    tableBody.innerHTML = "";
+                    data.forEach(offer => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${offer.id}</td>
+                            <td>${offer.name}</td>
+                            <td>${offer.description}</td>
+                            <td><button onclick="deleteOffer(${offer.id})">Delete</button></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+        }
+
+        // Function to fetch vouchers
+        function fetchVouchers() {
+            fetch('http://localhost:8080/vouchers')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector("#vouchersTable tbody");
+                    tableBody.innerHTML = "";
+                    data.forEach(voucher => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${voucher.id}</td>
+                            <td>${voucher.name}</td>
+                            <td>${voucher.value}</td>
+                            <td><button onclick="deleteVoucher(${voucher.id})">Delete</button></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+        }
+
+        // Function to fetch coupons
+        function fetchCoupons() {
+            fetch('http://localhost:8080/coupons')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector("#couponsTable tbody");
+                    tableBody.innerHTML = "";
+                    data.forEach(coupon => {
+                        const row = document.createElement("tr");
+                        row.innerHTML = `
+                            <td>${coupon.id}</td>
+                            <td>${coupon.code}</td>
+                            <td>${coupon.discount}</td>
+                            <td><button onclick="deleteCoupon(${coupon.id})">Delete</button></td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                });
+        }
+
+        // Function to delete an offer
+        function deleteOffer(id) {
+            fetch(`http://localhost:8080/offers/delete/${id}`, {
+                method: 'DELETE'
+            }).then(() => location.reload());
+        }
+
+        // Function to delete a voucher
+        function deleteVoucher(id) {
+            fetch(`http://localhost:8080/vouchers/delete/${id}`, {
+                method: 'DELETE'
+            }).then(() => location.reload());
+        }
+
+        // Function to delete a coupon
+        function deleteCoupon(id) {
+            fetch(`http://localhost:8080/coupons/delete/${id}`, {
+                method: 'DELETE'
+            }).then(() => location.reload());
+        }
+    </script>
+</body>
+</html>
